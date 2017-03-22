@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
 
     def show
         @movie = Movie.find(params[:id])
+        @reviews = @movie.reviews
     end
 
     def edit
@@ -27,7 +28,7 @@ class MoviesController < ApplicationController
 end
 
     def destroy
-        
+
         @movie.destroy
         flash[:alert] = 'Movie deleted'
         redirect_to movies_path
