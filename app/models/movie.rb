@@ -4,6 +4,6 @@ class Movie < ApplicationRecord
    validates :title, presence: true
 
    has_many :favorites
-   has_many :fans, through: :favorites, source: :user
+   has_many :members, through: :favorites, source: :user
 
 end

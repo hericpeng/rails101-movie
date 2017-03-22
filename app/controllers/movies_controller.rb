@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-    before_action :authenticate_user! , only: [:new, :create, :edit, :update, :destroy]
+    before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
     before_action :find_movie_and_check_permission, only: [:edit, :update, :destroy]
     def index
         @movies = Movie.all
@@ -11,15 +11,12 @@ class MoviesController < ApplicationController
 
     def show
         @movie = Movie.find(params[:id])
-        @reviews = @movie.reviews.recent.paginate(:page => params[:page], :per_page => 5)
+        @reviews = @movie.reviews.recent.paginate(page: params[:page], per_page: 5)
     end
 
-    def edit
-
-    end
+    def edit; end
 
     def update
-
         if @movie.update(movie_params)
             redirect_to movies_path, notice: 'Update Success'
         else
@@ -28,7 +25,6 @@ class MoviesController < ApplicationController
 end
 
     def destroy
-
         @movie.destroy
         flash[:alert] = 'Movie deleted'
         redirect_to movies_path
@@ -36,7 +32,7 @@ end
 
     def create
         @movie = Movie.new(movie_params)
-         @movie.user = current_user
+        @movie.user = current_user
 
         if @movie.save
             redirect_to movies_path
@@ -45,14 +41,40 @@ end
         end
     end
 
+      def join
+       @movie = Movie.find(params[:id])
+
+        if !current_user.is_member_of?(@movie)
+          current_user.join!(@movie)
+          flash[:notice] = "加入本电影组成功！"
+        else
+          flash[:warning] = "你已经是本电影组成员了！"
+        end
+
+        redirect_to movie_path(@movie)
+      end
+
+      def quit
+        @movie = Movie.find(params[:id])
+
+        if current_user.is_member_of?(@movie)
+          current_user.quit!(@movie)
+          flash[:alert] = "已退出本电影组！"
+        else
+          flash[:warning] = "你不是本电影组成员，怎么退出 XD"
+        end
+
+        redirect_to movie_path(@movie)
+      end
+
     private
 
     def find_movie_and_check_permission
-    @movie = Movie.find(params[:id])
+        @movie = Movie.find(params[:id])
 
-    if current_user != @movie.user
-      redirect_to root_path, alert: "You have no permission."
-    end
+        if current_user != @movie.user
+            redirect_to root_path, alert: 'You have no permission.'
+        end
   end
 
     def movie_params

@@ -1,40 +1,42 @@
 <div class="col-md-12">
-  <div class="movie">
-    <span class="pull-right">
-  <% if current_user && current_user.is_fan_of?(@movie) %>
-    <label class="label label-success"> 电影组成员 </label>
-  <% else %>
-    <label class="label label-warning"> 不是电影组组成员 </label>
-  <% end %>
-</span>
+    <div class="movie">
+        <span class="pull-right">
+            <% if current_user && current_user.is_member_of?(@movie) %>
+                <%= link_to("Write a Review", new_movie_review_path(@movie), class: "btn btn-default pull-right")%>
+                <label class="label label-success"> 电影组成员 </label>
+                <%= link_to("Quit Movie", quit_movie_path(@movie), method: :post, class: "btn btn-default") %>
 
-    <%= link_to("Write a Review", new_movie_review_path(@movie), class: "btn btn-default pull-right")%>
-    <% if current_user && current_user == @movie.user %>
-    <%= link_to("Edit", edit_movie_path(@movie), class: "btn btn-primary pull-right")%>
-    <% end %>
-  </div>
-  <h2><%= @movie.title %></h2>
-  <p><%= @movie.description %></p>
-  <table class="table">
-   <thead>
-     <tr>
-        <th>影评内容</th>
-        <th>发表者</th>
-        <th>发表时间</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @reviews.each do |review| %>
-        <tr>
-          <td><%= review.content %></td>
-          <td><%= review.user.email %></td>
-          <td><%= review.created_at %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+            <% else %>
+                <label class="label label-warning"> 不是电影组成员 </label>
+                <%= link_to("Join Movie", join_movie_path(@movie), method: :post, class: "btn btn-default") %>
+           <% end %>
+     </span>
 
-    <div class="text-center">
-     <%= will_paginate @reviews %>
+        <% if current_user && current_user == @movie.user %>
+            <%= link_to("Edit", edit_movie_path(@movie), class: "btn btn-primary pull-right")%>
+        <% end %>
     </div>
+    <h2><%= @movie.title %></h2>
+    <p><%= @movie.description %></p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>影评内容</th>
+                <th>发表者</th>
+                <th>发表时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @reviews.each do |review| %>
+                <tr>
+                    <td><%= review.content %></td>
+                    <td><%= review.user.email %></td>
+                    <td><%= review.created_at %></td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
+<div class="text-center">
+    <%= will_paginate @reviews %>
+</div>
