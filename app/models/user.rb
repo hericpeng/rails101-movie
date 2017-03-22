@@ -5,5 +5,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
   has_many :movies
   has_many :reviews
-  has_many :participated_movies, :through => :favorites, :source => :movie
+  has_many :favorites
+  has_many :favorited_movies, :through => :favorites, :source => :movie
+
+  def is_fan_of?(movie)
+     favorited_movies.include?(movie)
+  end
 end
